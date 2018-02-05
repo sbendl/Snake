@@ -1,10 +1,11 @@
 import random
 
+
 class Snake:
 
     def __init__(self, head_loc, direction, board):
         self.head = tuple(head_loc)
-        self.coords = [self.head, (self.head[0] + direction[0], self.head[1] + direction[1])]
+        self.coords = [self.head, (self.head[0] - direction[0], self.head[1] - direction[1])]
         self.direction = direction
         self.grow = False
         self.removed = ()
@@ -12,7 +13,7 @@ class Snake:
 
     def move(self):
         self.head = (self.head[0] + self.direction[0], self.head[1] + self.direction[1])
-        self.coords = [self.head].extend(self.coords)
+        self.coords = [self.head] + self.coords
         if not self.grow:
             self.removed = self.coords.pop()
 
@@ -45,6 +46,14 @@ class Board:
         for snake in self.snakes:
             for row, col in snake.coords:
                 self.board[row][col] = True
+
+    def tick(self):
+        for snake in self.snakes:
+            snake.move()
+            self.board[snake.head[0]][snake.head[1]] = True
+            self.board[snake.removed[0]][snake.removed[1]] = False
+
+
 
     def __str__(self):
         return '\n'.join(['|' + ''.join(["X" if i else '.' for i in row]) + '|' for row in self.board])
